@@ -1,5 +1,9 @@
 # Linkind BLE Button for Home Assistant
 
+[![Release](https://img.shields.io/github/v/release/RitwikGupta/ha-linkind-ble)](https://github.com/RitwikGupta/ha-linkind-ble/releases)
+[![Validate](https://github.com/RitwikGupta/ha-linkind-ble/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/RitwikGupta/ha-linkind-ble/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/RitwikGupta/ha-linkind-ble)](LICENSE)
+
 An experimental, local Home Assistant custom integration for the **Linkind
 HCRZ12FBM071** Bluetooth button. It turns observed button radio activity into a
 native `event` entity, received by a Home Assistant Bluetooth adapter or an
@@ -41,27 +45,44 @@ The integration only listens to advertisements. Active Bluetooth connections are
 not required, and the HA host itself does not need a Bluetooth radio when a proxy
 is available.
 
-## Install
+## Installation
 
-### HACS custom repository
+### HACS (recommended)
 
-1. In HACS, open **Custom repositories** and add
-   `https://github.com/RitwikGupta/ha-linkind-ble` as type **Integration**.
-2. Download **Linkind BLE Button**. If using the first experimental release,
-   enable pre-release versions in HACS when choosing a version.
-3. Restart Home Assistant.
-4. Press the button near a receiver. In **Settings → Devices & services**, open
-   the discovered candidate and confirm its address and model.
+[![Add Linkind BLE Button to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=RitwikGupta&repository=ha-linkind-ble&category=integration)
 
-This repository is intended for HACS custom-repository installation; it is not
-listed in the default HACS catalog.
+Use the button above to open this repository in your HA instance's HACS, then
+download **Linkind BLE Button** and **restart Home Assistant**.
 
-### Manual installation
+To add the repository yourself:
 
-Copy `custom_components/linkind_ble` from this repository to
-`<your HA config directory>/custom_components/linkind_ble`, then restart HA.
-Use the discovery flow above, or **Add integration → Linkind BLE Button** after
-pressing the button.
+1. Open **HACS → ⋮ → Custom repositories**.
+2. Enter `https://github.com/RitwikGupta/ha-linkind-ble` and choose the
+   **Integration** category.
+3. Find **Linkind BLE Button** and download the latest release.
+4. **Restart Home Assistant.**
+
+The repository is not in the default HACS catalog, so adding it as a custom
+repository is required.
+
+### Manual
+
+1. Download and extract the source ZIP from the
+   [latest release](https://github.com/RitwikGupta/ha-linkind-ble/releases/latest).
+2. Copy `custom_components/linkind_ble/` from the extracted files into your HA
+   configuration directory's `custom_components/` folder. The final path should
+   be `<config>/custom_components/linkind_ble/manifest.json`.
+3. **Restart Home Assistant.**
+
+## Setup
+
+1. Press the button near a working Bluetooth receiver or ESPHome proxy.
+2. Open **Settings → Devices & services** and configure the discovered
+   **Linkind BLE Button** candidate. If no discovery card appears, choose
+   **Add integration → Linkind BLE Button** and select the detected address.
+3. Confirm that the address belongs to your **HCRZ12FBM071**.
+4. Open its device page to find the **Button activity** event entity, then
+   [create an automation](#automate).
 
 Identify the address in HA's Bluetooth advertisement monitor: press the button
 and look for changing manufacturer data under `0x1511` / `5393`. The first byte
