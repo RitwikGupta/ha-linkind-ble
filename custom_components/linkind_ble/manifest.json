@@ -2,7 +2,6 @@
   "domain": "linkind_ble",
   "name": "Linkind BLE Button",
   "bluetooth": [{"manufacturer_id": 5393, "connectable": false}],
-  "categories": ["buttons_remotes"],
   "codeowners": ["@RitwikGupta"],
   "config_flow": true,
   "dependencies": ["bluetooth"],
