@@ -4,46 +4,19 @@
 [![Validate](https://github.com/RitwikGupta/ha-linkind-ble/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/RitwikGupta/ha-linkind-ble/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/RitwikGupta/ha-linkind-ble)](LICENSE)
 
-An experimental, local Home Assistant custom integration for the **Linkind
-HCRZ12FBM071** Bluetooth button. It turns observed button radio activity into a
-native `event` entity, received by a Home Assistant Bluetooth adapter or an
-[ESPHome Bluetooth proxy](https://esphome.io/components/bluetooth_proxy/).
+Use a **Linkind HCRZ12FBM071** Bluetooth button in Home Assistant. Button activity
+shows up as an event you can use to toggle lights, run a script, or start another
+automation.
 
-No AiDot account, compatible bulb, Mac listener, or button firmware changes are
-needed. This is an independent community project, unaffiliated with Linkind,
-AiDot, or Home Assistant.
-
-## What works
-
-- Discovery of candidate advertisements, followed by confirmation of the model
-  and Bluetooth address.
-- One device and **Button activity** event entity per configured button.
-- One `activity` event per new matching frame, suppressing repeated frames across
-  Bluetooth receivers with a ten-second quiet period.
-- Local push updates, unloading/reloading, translated UI strings, and diagnostics
-  that exclude device addresses and advertisement contents.
-
-**This is an activity detector, not a complete command decoder.** Normal front
-button presses have produced distinct frames in live tests on one physical unit.
-Single press, double press, hold, on/off intent, and battery level are **not
-decoded**. Mixed gesture testing has not established a reliable mapping. Do not
-configure separate gesture actions from this integration yet.
-
-The manufacturer field and frame layout may also occur in other products. Only
-confirm discovery if you have identified your HCRZ12FBM071. Other Linkind models,
-including Zigbee remotes, are outside the current support scope.
+It works through Home Assistant's Bluetooth integration, including
+[ESPHome Bluetooth proxies](https://esphome.io/components/bluetooth_proxy/).
+You don't need an AiDot account or bulb.
 
 ## Requirements
 
-- Home Assistant **2026.10.4 or newer**. This is the tested minimum and provides
-  the Bluetooth callback replay control used here.
-- A working [Home Assistant Bluetooth integration](https://www.home-assistant.io/integrations/bluetooth/),
-  using a local receiver or an ESPHome proxy within range of the button.
-- A Linkind HCRZ12FBM071 that emits the documented advertisement format.
-
-The integration only listens to advertisements. Active Bluetooth connections are
-not required, and the HA host itself does not need a Bluetooth radio when a proxy
-is available.
+- Home Assistant **2026.10.4 or newer**.
+- A Bluetooth adapter or ESPHome proxy connected to HA and within range of the
+  button. If you use a proxy, your HA host doesn't need its own Bluetooth adapter.
 
 ## Installation
 
@@ -51,8 +24,8 @@ is available.
 
 [![Add Linkind BLE Button to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=RitwikGupta&repository=ha-linkind-ble&category=integration)
 
-Use the button above to open this repository in your HA instance's HACS, then
-download **Linkind BLE Button** and **restart Home Assistant**.
+Click the button above, download **Linkind BLE Button** in HACS, and restart Home
+Assistant.
 
 To add the repository yourself:
 
@@ -62,8 +35,7 @@ To add the repository yourself:
 3. Find **Linkind BLE Button** and download the latest release.
 4. **Restart Home Assistant.**
 
-The repository is not in the default HACS catalog, so adding it as a custom
-repository is required.
+This integration isn't in the default HACS catalog yet.
 
 ### Manual
 
@@ -76,28 +48,21 @@ repository is required.
 
 ## Setup
 
-1. Press the button near a working Bluetooth receiver or ESPHome proxy.
-2. Open **Settings → Devices & services** and configure the discovered
-   **Linkind BLE Button** candidate. If no discovery card appears, choose
-   **Add integration → Linkind BLE Button** and select the detected address.
-3. Confirm that the address belongs to your **HCRZ12FBM071**.
-4. Open its device page to find the **Button activity** event entity, then
-   [create an automation](#automate).
+1. Press the button near your Bluetooth receiver.
+2. Go to **Settings → Devices & services** and click **Configure** on the
+   discovered Linkind button. You can also use **Add integration → Linkind BLE
+   Button** to select it yourself.
+3. Confirm the button's address.
 
-Identify the address in HA's Bluetooth advertisement monitor: press the button
-and look for changing manufacturer data under `0x1511` / `5393`. The first byte
-changes between actions. Never select an unrelated device just because it has
-the same manufacturer field.
+The device page will now have a **Button activity** entity.
 
 ## Automate
 
-Find the new **Button activity** entity on the integration's device page. In the
-automation editor choose an event entity's **received** trigger and event type
-**Activity**, then select the action you want.
+In the automation editor, select **Button activity**, choose the **received**
+trigger, and set the event type to **Activity**. Then add whatever action you want
+the button to run.
 
-For example, replace both entity IDs below with your own. This toggles a light
-group on any detected activity; it does not infer an on/off command from the
-button.
+This example toggles a light group. Replace both entity IDs with your own:
 
 ```yaml
 alias: Linkind activity toggles lights
@@ -115,52 +80,40 @@ actions:
 mode: single
 ```
 
-The entity's state is the last activity timestamp. Attributes include
-`event_type: activity`, the observed byte `counter`, and receive `rssi` in dBm.
-The counter is diagnostic data, not a gesture, stable press ID, or button number.
-Use the event trigger rather than triggering on arbitrary attribute changes.
-HA can restore the last timestamp; cached advertisements are not replayed as new
-activity when the entity subscribes.
+The entity shows the time of the last activity. Its attributes also include the
+frame counter and Bluetooth signal strength (`rssi`).
 
-## Limitations and troubleshooting
+## Current support
 
-- **No discovery:** confirm the proxy/adapter is online in HA, move the button
-  close to it, press once, and inspect Bluetooth advertisements. Installing this
-  integration does not configure the proxy's Wi-Fi or ESPHome API connection.
-- **No event yet:** a sleeping button is quiet until it transmits. The integration
-  keeps the event entity available while it sleeps; availability does not prove
-  that the battery or radio path is healthy.
-- **Unexpected or missed actions:** disable your automation and record isolated,
-  labeled trials before assuming a gesture mapping. Distinct frames can each
-  generate activity; their semantic meaning remains unknown.
-- **Repeated frames:** identical complete payloads within ten seconds of their
-  last delivered callback are suppressed. The same payload after ten seconds of
-  silence is accepted again. This is duplicate filtering, not authentication or
-  replay protection. Live retransmissions spanning a restart may still appear
-  as fresh activity.
-- **Address changes:** address stability after battery replacement or reset has
-  not been established. If the address changes, identify and configure the new
-  candidate, then remove the old entry.
-- **Other hardware/firmware:** only one physical button has been tested. Please
-  report additional hardware revisions and labeled results rather than assuming
-  compatibility.
+This is still experimental and has been tested with one HCRZ12FBM071. All detected
+actions produce the same `activity` event. Separate single-press, double-press,
+hold, and on/off events aren't available yet, nor is a battery reading.
 
-For an issue, include the HA version, button model, receiver type, reproduction
-steps, and integration diagnostics. Review attachments before sharing them.
-Do not upload a full Bluetooth environment capture, home configuration, or keys.
+The [protocol notes](docs/protocol.md) cover what we've found so far, how repeated
+messages are filtered, and what still needs testing.
+
+## Troubleshooting
+
+If no button appears during setup, check that HA can see your Bluetooth adapter
+or proxy, move the button closer, and press it again.
+
+If events aren't arriving, watch **Button activity** on the device page while
+pressing the button. This helps narrow down whether the problem is reception or
+the automation.
+
+For other problems, [open an issue](https://github.com/RitwikGupta/ha-linkind-ble/issues)
+with your HA version, button model, receiver type, and what happened. You can
+download integration diagnostics from its entry in **Devices & services**.
 
 ## Remove
 
-Delete the integration entry in **Settings → Devices & services** to stop
-listening and remove its entities. Remove the download in HACS, or delete the
-`custom_components/linkind_ble` directory, then restart HA to uninstall the code.
+Delete the integration entry in **Settings → Devices & services**, then remove
+the download in HACS and restart HA. If you installed it manually, delete the
+`custom_components/linkind_ble/` folder instead.
 
 ## Development and protocol research
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and testing, and
-[docs/protocol.md](docs/protocol.md) for observed bytes, evidence limits, and the
-remaining research questions. The runtime uses only HA's Bluetooth API; the
-parser has no third-party dependencies. All committed packet fixtures are
-synthetic.
+See [CONTRIBUTING.md](CONTRIBUTING.md) to run the tests or help decode more of the
+button's messages.
 
 Licensed under [MIT](LICENSE).

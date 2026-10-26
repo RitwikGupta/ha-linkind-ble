@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — 2026-10-26
+
+- Shortened the setup screens and removed the feature warnings from device setup.
+- Rewrote the README with simpler instructions and less technical detail.
+
 ## 0.1.0 — 2026-10-26
 
 First release for the Linkind HCRZ12FBM071, with experimental activity detection:

@@ -3,21 +3,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "Select a Linkind button candidate",
-        "description": "Press your HCRZ12FBM071 near a Home Assistant Bluetooth adapter or ESPHome Bluetooth proxy, then select its address. The matching advertisement format alone does not establish the model.",
+        "title": "Select your button",
+        "description": "Press your button near a Bluetooth receiver, then select it below.",
         "data": {
           "address": "Bluetooth address"
         }
       },
       "bluetooth_confirm": {
-        "title": "Confirm {name}",
-        "description": "Is {address} your Linkind HCRZ12FBM071 button? Only confirm if you have checked the model and identified this address, for example by pressing it while watching Bluetooth advertisements. This experimental integration reports activity only; on/off, double press, hold, and battery are not decoded."
+        "title": "Add {name}?",
+        "description": "Linkind HCRZ12FBM071\n\nBluetooth address: {address}"
       }
     },
     "abort": {
-      "already_configured": "This button is already configured.",
-      "not_supported": "This advertisement does not match the observed button format.",
-      "no_devices_found": "No unconfigured matching devices found. Press the button near a working Home Assistant Bluetooth receiver, then try again."
+      "already_configured": "This button has already been added.",
+      "not_supported": "Couldn't recognize this button.",
+      "no_devices_found": "No buttons found. Move the button closer to a Bluetooth receiver and press it, then try again."
     }
   },
   "entity": {
