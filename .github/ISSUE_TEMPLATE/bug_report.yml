@@ -1,0 +1,28 @@
+name: Bug report
+description: Report a problem or an additional tested hardware revision
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Home Assistant and integration versions
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Button model and Bluetooth receiver type
+      description: Include the printed model. Omit Bluetooth addresses.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps and results
+      description: Include exact gestures, timing, and unexpected activity.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Integration diagnostics
+      description: Review attachments for private data. Do not attach HA backups, keys, screenshots of your home, or full Bluetooth captures.

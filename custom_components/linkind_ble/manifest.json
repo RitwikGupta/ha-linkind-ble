@@ -1,0 +1,14 @@
+{
+  "domain": "linkind_ble",
+  "name": "Linkind BLE Button",
+  "bluetooth": [{"manufacturer_id": 5393, "connectable": false}],
+  "codeowners": ["@RitwikGupta"],
+  "config_flow": true,
+  "dependencies": ["bluetooth"],
+  "documentation": "https://github.com/RitwikGupta/ha-linkind-ble",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/RitwikGupta/ha-linkind-ble/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
